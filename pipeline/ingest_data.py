@@ -33,42 +33,42 @@ def ingest_data(
     chunksize: int = 100000,
 ) -> pd.DataFrame:
 
-df_iter = pd.read_csv(
-    url,
-    dtype=dtype,
-    parse_dates=parse_dates,
-    iterator=True,
-    chunksize=chunksize
-)
+    df_iter = pd.read_csv(
+        url,
+        dtype=dtype,
+        parse_dates=parse_dates,
+        iterator=True,
+        chunksize=chunksize
+    )
 
-first_chunk = next(df_iter)
+    first_chunk = next(df_iter)
 
-first_chunk.head(0).to_sql(
-    name=target_table,
-    con=engine,
-    if_exists="replace"
-)
+    first_chunk.head(0).to_sql(
+        name=target_table,
+        con=engine,
+        if_exists="replace"
+    )
 
-print(f"Table {target_table} created")
+    print(f"Table {target_table} created")
 
-first_chunk.to_sql(
-    name=target_table,
-    con=engine,
-    if_exists="append"
-)
+    first_chunk.to_sql(
+        name=target_table,
+        con=engine,
+        if_exists="append"
+    )
 
-print(f"Inserted first chunk: {len(first_chunk)}")
+    print(f"Inserted first chunk: {len(first_chunk)}")
 
-for df_chunk in tqdm(df_iter):
-df_chunk.to_sql(
-    name=target_table,
-    con=engine,
-    if_exists="append"
-)
+    for df_chunk in tqdm(df_iter):
+        df_chunk.to_sql(
+            name=target_table,
+            con=engine,
+            if_exists="append"
+        )
 
-print(f"Inserted chunk: {len(df_chunk)}")
+    print(f"Inserted chunk: {len(df_chunk)}")
 
-print(f'done ingesting to {target_table}')
+    print(f'done ingesting to {target_table}')
 
 def main():
     pg_user = 'root'
@@ -80,10 +80,8 @@ def main():
     month = 1
     chunksize = 100000
     target_table = 'yellow_taxi_data'
-    engine =
-    create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
-    url_prefix =
-    'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow'
+    engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
+    url_prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow'
     url = f'{url_prefix}/yellow_tripdata_{year:04d}-{month:02d}.csv.gz'
     ingest_data(
         url=url,
@@ -93,4 +91,4 @@ def main():
     )
 
 if __name__ == '__main__':
-main()
+    main()
